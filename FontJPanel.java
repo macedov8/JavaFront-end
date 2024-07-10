@@ -12,8 +12,9 @@ public class FontJPanel extends JPanel
       super.paintComponent(g); 
 
       // set font to Serif (Times), bold, 12pt and draw a string 
-      g.fillRect(20, 40, 100, 50);
       g.setColor(Color.BLUE);
+      g.fillRect(20, 40, 100, 50);
+      g.setColor(Color.WHITE);
       g.setFont(new Font("Arial", Font.ITALIC, 22));
       g.drawString("Senac.", 22, 70);
     
