@@ -1,6 +1,7 @@
 import java.sql.*;
 
 public class NavegadorDeRegistro {
+
     public static String[] primeiroRegistro(String db, String tbl) throws Exception {
         Connection conexao = MySQLConnector.conectar();
         String strSqlPrimeiroRegistro = "SELECT * FROM " + db + "." + tbl + " ORDER BY id ASC LIMIT 1;";
@@ -35,33 +36,35 @@ public class NavegadorDeRegistro {
 
     public static String[] registroAnterior(String db, String tbl, String currentId) throws Exception {
         Connection conexao = MySQLConnector.conectar();
-        String strSqlRegistroAnterior = "SELECT * FROM " + db + "." + tbl + " WHERE id < " + currentId + " ORDER BY id DESC LIMIT 1;";
-        Statement stmSqlRegistroAnterior = conexao.createStatement();
-        ResultSet rstSqlRegistroAnterior = stmSqlRegistroAnterior.executeQuery(strSqlRegistroAnterior);
-        rstSqlRegistroAnterior.next();
+        String strSqlRegistroAnterior = "SELECT * FROM " + db + "." + tbl + " WHERE id < ? ORDER BY id DESC LIMIT 1;";
+        PreparedStatement pstRegistroAnterior = conexao.prepareStatement(strSqlRegistroAnterior);
+        pstRegistroAnterior.setString(1, currentId);
+        ResultSet rstRegistroAnterior = pstRegistroAnterior.executeQuery();
+        rstRegistroAnterior.next();
         String[] resultado = {
-            rstSqlRegistroAnterior.getString("id"),
-            rstSqlRegistroAnterior.getString("nome"),
-            rstSqlRegistroAnterior.getString("email"),
-            rstSqlRegistroAnterior.getString("senha")
+            rstRegistroAnterior.getString("id"),
+            rstRegistroAnterior.getString("nome"),
+            rstRegistroAnterior.getString("email"),
+            rstRegistroAnterior.getString("senha")
         };
-        stmSqlRegistroAnterior.close();
+        pstRegistroAnterior.close();
         return resultado;
     }
 
     public static String[] proximoRegistro(String db, String tbl, String currentId) throws Exception {
         Connection conexao = MySQLConnector.conectar();
-        String strSqlProximoRegistro = "SELECT * FROM " + db + "." + tbl + " WHERE id > " + currentId + " ORDER BY id ASC LIMIT 1;";
-        Statement stmSqlProximoRegistro = conexao.createStatement();
-        ResultSet rstSqlProximoRegistro = stmSqlProximoRegistro.executeQuery(strSqlProximoRegistro);
-        rstSqlProximoRegistro.next();
+        String strSqlProximoRegistro = "SELECT * FROM " + db + "." + tbl + " WHERE id > ? ORDER BY id ASC LIMIT 1;";
+        PreparedStatement pstProximoRegistro = conexao.prepareStatement(strSqlProximoRegistro);
+        pstProximoRegistro.setString(1, currentId);
+        ResultSet rstProximoRegistro = pstProximoRegistro.executeQuery();
+        rstProximoRegistro.next();
         String[] resultado = {
-            rstSqlProximoRegistro.getString("id"),
-            rstSqlProximoRegistro.getString("nome"),
-            rstSqlProximoRegistro.getString("email"),
-            rstSqlProximoRegistro.getString("senha")
+            rstProximoRegistro.getString("id"),
+            rstProximoRegistro.getString("nome"),
+            rstProximoRegistro.getString("email"),
+            rstProximoRegistro.getString("senha")
         };
-        stmSqlProximoRegistro.close();
+        pstProximoRegistro.close();
         return resultado;
     }
 
@@ -118,12 +121,14 @@ public class NavegadorDeRegistro {
         pstAdicionar.executeUpdate();
         pstAdicionar.close();
     }
+
     public static String[] buscarRegistro(String db, String tbl, String nomeOuEmail) throws Exception {
         Connection conexao = MySQLConnector.conectar();
-        String strSqlBuscar = "SELECT * FROM " + db + "." + tbl + " WHERE nome = ? OR email = ?;";
+        String strSqlBuscar = "SELECT * FROM " + db + "." + tbl + " WHERE nome LIKE ? OR email LIKE ?;";
         PreparedStatement pstBuscar = conexao.prepareStatement(strSqlBuscar);
-        pstBuscar.setString(1, nomeOuEmail);
-        pstBuscar.setString(2, nomeOuEmail);
+        String pesquisa = "%" + nomeOuEmail + "%";
+        pstBuscar.setString(1, pesquisa);
+        pstBuscar.setString(2, pesquisa);
         ResultSet rstBuscar = pstBuscar.executeQuery();
 
         if (rstBuscar.next()) {
@@ -137,8 +142,7 @@ public class NavegadorDeRegistro {
             return resultado;
         } else {
             pstBuscar.close();
-            throw new Exception("Registro não encontrado.");
+            throw new Exception("Nenhum registro encontrado.");
         }
     }
 }
-

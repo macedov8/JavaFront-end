@@ -33,6 +33,7 @@ public class EditarCadastro extends JFrame {
         atualizarJButton.setToolTipText("Atualizar cadastro");
         add(pesquisarJButton);
         pesquisarJButton.setToolTipText("Pesquisar");
+        pesquisarJButton.setEnabled(false);
         
         
         add(nomeJLabel);
@@ -47,6 +48,7 @@ public class EditarCadastro extends JFrame {
         add(new JLabel());
         add(adicionarNovoCadastroJButton);
         adicionarNovoCadastroJButton.setToolTipText("Novo cadastro");
+        adicionarNovoCadastroJButton.setEnabled(false);
        
 
         add(senhaJLabel);
@@ -226,6 +228,10 @@ public class EditarCadastro extends JFrame {
             NavegadorDeRegistro.adicionarNovoRegistro("db_teste", "tbl_teste", nomeTextField.getText(), emailTextField.getText(), new String(senhaTextField.getPassword()));
             notificacaoJLabel.setText("Cadastro adicionado com sucesso");
             carregarPrimeiroRegistro();
+            limparCamposJButton.setEnabled(true);
+            deletarRegistroJButton.setEnabled(true);
+            adicionarNovoCadastroJButton.setEnabled(false);
+            pesquisarJButton.setEnabled(false);
         } catch (Exception e) {
             notificacaoJLabel.setText("Erro ao adicionar novo cadastro: " + e.getMessage());
         }
@@ -236,6 +242,14 @@ public class EditarCadastro extends JFrame {
         senhaTextField.setText("");
         idTextField.setText("");
         atualizarJButton.setEnabled(false);
+        pesquisarJButton.setEnabled(true);
+        adicionarNovoCadastroJButton.setEnabled(true);
+        deletarRegistroJButton.setEnabled(false);
+        ultimoRegistroJButton.setEnabled(false);
+        limparCamposJButton.setEnabled(false);
+        proximoRegistroJButton.setEnabled(false);
+        
+        
     }
 
     private void atualizarBotoes(String idAtual) {
@@ -261,6 +275,11 @@ public class EditarCadastro extends JFrame {
             emailTextField.setText(resultado[2]);
             senhaTextField.setText(resultado[3]);
             atualizarJButton.setEnabled(false);
+            limparCamposJButton.setEnabled(true);
+            deletarRegistroJButton.setEnabled(true);
+            adicionarNovoCadastroJButton.setEnabled(false);
+            pesquisarJButton.setEnabled(false);
+            
             atualizarBotoes(resultado[0]);
         } catch (Exception e) {
             notificacaoJLabel.setText("Erro ao buscar o registro: " + e.getMessage());
